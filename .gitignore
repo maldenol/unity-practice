@@ -1,0 +1,10 @@
+# Unity Editor garbage
+Library/
+Logs/
+Packages/
+ProjectSettings/
+UserSettings/
+Temp/
+.vscode/
+*.csproj
+*.sln
