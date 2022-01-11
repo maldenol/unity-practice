@@ -1,7 +1,5 @@
-Shader "Diniska/PhongShader"
-{
-    Properties
-    {
+Shader "Diniska/PhongShader" {
+    Properties {
         [Header(Texture)]
         _MainTex ("Texture", 2D) = "white" {}
 
@@ -17,11 +15,9 @@ Shader "Diniska/PhongShader"
         _SpecCoef ("Coefficient", Range(0, 5)) = 0.75
         _SpecShin ("Shinness", Range(0, 10)) = 5
     }
-    SubShader
-    {
+    SubShader {
         Tags { "RenderType"="Transparent" "LightMode"="ForwardBase" }
-        Pass
-        {
+        Pass {
             CGPROGRAM
 
             #pragma vertex vert
@@ -29,8 +25,7 @@ Shader "Diniska/PhongShader"
 
             #include "UnityCG.cginc"
 
-            struct v2f
-            {
+            struct Interpolator {
                 float4 pos : SV_POSITION;
                 float2 uv : TEXCOORD0;
                 fixed4 light : COLOR0;
@@ -46,32 +41,51 @@ Shader "Diniska/PhongShader"
             fixed _SpecCoef;
             fixed _SpecShin;
 
-            v2f vert (appdata_base v)
-            {
-                v2f o;
-                o.pos = UnityObjectToClipPos(v.vertex);
-                o.uv = TRANSFORM_TEX(v.texcoord, _MainTex);
+            float phongLight(float4 vertex, fixed3 normal) {
                 fixed4 ambient = _AmbCoef * _AmbInt * _AmbCol;
-                float3 lightDir = normalize(_WorldSpaceLightPos0.xyz);
-                float3 worldNormal = UnityObjectToWorldNormal(v.normal.xyz);
-                float lightAndNormalDotProduct = max(0, dot(lightDir, worldNormal));
-                fixed4 diffuse = _DifCoef * _LightColor0 * lightAndNormalDotProduct;
-                float4 worldPos = mul(unity_ObjectToWorld, v.vertex);
-                float3 viewDir = normalize(UnityWorldSpaceViewDir(worldPos.xyz));
-                float3 idealSpecularDir = 2 * lightAndNormalDotProduct * worldNormal - lightDir;
-                float specular = _SpecCoef * pow(_LightColor0 * max(0, dot(viewDir, idealSpecularDir)), _SpecShin);
-                o.light = ambient + diffuse + specular;
-                return o;
+                float3 L = normalize(_WorldSpaceLightPos0.xyz);
+                float3 N = UnityObjectToWorldNormal(normal.xyz);
+                float LdotN = max(0, dot(L, N));
+                fixed4 diffuse = _DifCoef * _LightColor0 * LdotN;
+                float4 worldPos = mul(unity_ObjectToWorld, vertex);
+                float3 V = normalize(UnityWorldSpaceViewDir(worldPos.xyz));
+                float3 R = 2 * LdotN * N - L;
+                float specular = _SpecCoef * pow(_LightColor0 * max(0, dot(V, R)), _SpecShin);
+                //float fresnel = pow(1 - dot(V, N), 2);
+                //return ambient + diffuse + specular + fresnel;
+                return ambient + diffuse + specular;
             }
 
-            fixed4 frag (v2f i) : SV_TARGET
-            {
-                fixed4 col = tex2D(_MainTex, -i.uv);
-                return col * i.light;
+            float blinnPhongLight(float4 vertex, fixed3 normal) {
+                fixed4 ambient = _AmbCoef * _AmbInt * _AmbCol;
+                float3 L = normalize(_WorldSpaceLightPos0.xyz);
+                float3 N = UnityObjectToWorldNormal(normal.xyz);
+                float LdotN = max(0, dot(L, N));
+                fixed4 diffuse = _DifCoef * _LightColor0 * LdotN;
+                float4 worldPos = mul(unity_ObjectToWorld, vertex);
+                float3 V = normalize(UnityWorldSpaceViewDir(worldPos.xyz));
+                float3 H = normalize(L + V);
+                float specular = _SpecCoef * pow(_LightColor0 * max(0, dot(H, N)), _SpecShin);
+                //float fresnel = pow(1 - dot(V, N), 2);
+                //return ambient + diffuse + specular + fresnel;
+                return ambient + diffuse + specular;
+            }
+
+            Interpolator vert(appdata_base v) {
+                Interpolator i;
+                i.pos = UnityObjectToClipPos(v.vertex);
+                i.uv = TRANSFORM_TEX(v.texcoord, _MainTex);
+                i.light = phongLight(v.vertex, v.normal);
+                return i;
+            }
+
+            fixed4 frag(Interpolator i) : SV_TARGET {
+                fixed4 texel = tex2D(_MainTex, -i.uv);
+                return texel * i.light;
             }
 
             ENDCG
         }
     }
-    Fallback "Unlit"
+    Fallback "Diffuse"
 }
