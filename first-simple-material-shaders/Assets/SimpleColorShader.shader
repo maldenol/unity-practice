@@ -12,6 +12,7 @@ Shader "Diniska/SimpleColorShader" {
             ZWrite Off // do not write at Z-buffer
             //ZTest LEqual // Z-test
             //Cull Off // culling (Back, Off, Front)
+            BlendOp Add // blend mode operation
             Blend One One // additive blending
             //Blend DstColor Zero // multiplicative blending
             //Blend Zero SrcColor // multiplicative blending
