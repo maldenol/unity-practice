@@ -19,17 +19,37 @@ Material:
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
+    - _AmbOccMap:
+        m_Texture: {fileID: 2800000, guid: f75029203caba9c74b2861376d22dd35, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _HeightMap:
+        m_Texture: {fileID: 2800000, guid: 3a7c59361fdcf2d9a810232520cf3c86, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 10309, guid: 0000000000000000f000000000000000, type: 0}
+        m_Texture: {fileID: 2800000, guid: 1cd6b67626257d443959c7b22fcacaf5, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _NormalMap:
+        m_Texture: {fileID: 2800000, guid: 66686a5a66795064db0f9f48c0f2da3f, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _RoughMap:
+        m_Texture: {fileID: 2800000, guid: 9a219a26d370d7807946c434d76f309d, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
     - _AmbCoef: 0.15
     - _AmbInt: 1
+    - _AmbOccStr: 1
     - _DifCoef: 0.6
     - _DifInt: 0.768
     - _Glossiness: 0.5
+    - _HeightStr: 1
     - _Metallic: 0
+    - _NormalStr: 1
+    - _RoughStr: 1
     - _SpecCoef: 0.35
     - _SpecGlos: 2
     - _SpecShin: 5
