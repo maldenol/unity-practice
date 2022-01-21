@@ -205,7 +205,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   SIZE: 2
-  LOD: 10
+  LOD: 50
 --- !u!4 &237532349
 Transform:
   m_ObjectHideFlags: 0
@@ -562,7 +562,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   SIZE: 2
-  LOD: 10
+  LOD: 50
 --- !u!23 &1964355638
 MeshRenderer:
   m_ObjectHideFlags: 0

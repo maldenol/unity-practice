@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Cube : MonoBehaviour {
     public uint SIZE = 2;
-    public uint LOD = 2;
+    public uint LOD  = 2;
 
     void Awake() {
         Mesh mesh = new Mesh();
@@ -80,41 +80,47 @@ public class Cube : MonoBehaviour {
         //     21, 23, 22, // z+ right-down
         // };
 
-        // Level-Of-Details
-        float step = (float)SIZE / LOD; // discrete quad side size (optimization)
-        float halfSize = SIZE / 2f;     // hald of the SIZE (optimization)
-        int quadLOD = (int)(LOD * LOD); // LOD^2 (optimization)
+        // Level-Of-Details (count of quads along one side)
+        float step     = (float)SIZE / LOD; // discrete quad's side size (optimization)
+        float halfSize = SIZE / 2f;         // hald of the SIZE (optimization)
+        int quadLOD    = (int)(LOD * LOD);  // LOD^2 (optimization)
 
-        List<Vector3> vertices = new List<Vector3>();
-        int[] triangles = new int[quadLOD * 6 * 6]; // 6 sides of 2*LOD^2 triangles (3 indexes each) each
+        int quadsPerSideCount     = quadLOD;
+        int verticesPerSideCount  = 4 * quadLOD;
+        int verticesCount         = 6 * verticesPerSideCount;
+        int trianglesPerSideCount = 2 * quadLOD * 3; // indexes actually, 3 indexes for each triangle
+        int trianglesCount        = 6 * trianglesPerSideCount;
+
+        Vector3[] vertices = new Vector3[verticesCount];
+        Vector3[] normals  = new Vector3[verticesCount];
+        int[] triangles    = new int[trianglesCount];
 
         for (int j = 0; j < 6; ++j) { // the whole cube
-            for (int i = 0; i < quadLOD; ++i) { // single side
-                float lx = i % LOD * step - halfSize;
-                float rx = (i % LOD + 1) * step - halfSize;
-                float uy = (i / LOD + 1) * step - halfSize;
-                float dy = i / LOD * step - halfSize;
+            for (int i = 0; i < quadsPerSideCount; ++i) { // single side
+                int row    = i / (int)LOD;
+                int column = i % (int)LOD;
+                float lx   = column * step - halfSize;
+                float rx   = (column + 1) * step - halfSize;
+                float uy   = (row + 1) * step - halfSize;
+                float dy   = row * step - halfSize;
 
                 Vector3 lu = new Vector3(lx, uy, 0);
                 Vector3 ru = new Vector3(rx, uy, 0);
                 Vector3 ld = new Vector3(lx, dy, 0);
                 Vector3 rd = new Vector3(rx, dy, 0);
 
-                int sideTriangleIndexOffset = j * quadLOD * 6; // offset for triangles index according to side index (j)
-                int sideVertexIndexOffset = j * quadLOD * 4;   // offset for vertices index according to side index (j)
-                triangles[sideTriangleIndexOffset + i * 6] = sideVertexIndexOffset + i * 4;         // left-up
-                triangles[sideTriangleIndexOffset + i * 6 + 1] = sideVertexIndexOffset + i * 4 + 1; // left-up
-                triangles[sideTriangleIndexOffset + i * 6 + 2] = sideVertexIndexOffset + i * 4 + 2; // left-up
-                triangles[sideTriangleIndexOffset + i * 6 + 3] = sideVertexIndexOffset + i * 4 + 1; // right-down
-                triangles[sideTriangleIndexOffset + i * 6 + 4] = sideVertexIndexOffset + i * 4 + 3; // right-down
-                triangles[sideTriangleIndexOffset + i * 6 + 5] = sideVertexIndexOffset + i * 4 + 2; // right-down
+                Vector3 n = Vector3.back;
 
+                // placing the side on its place
                 switch (j) {
                 case 0: // x-
                     lu = Quaternion.AngleAxis(90, Vector3.up) * lu;
                     ru = Quaternion.AngleAxis(90, Vector3.up) * ru;
                     ld = Quaternion.AngleAxis(90, Vector3.up) * ld;
                     rd = Quaternion.AngleAxis(90, Vector3.up) * rd;
+
+                    n = Quaternion.AngleAxis(90, Vector3.up) * n;
+
                     lu.x -= halfSize;
                     ru.x -= halfSize;
                     ld.x -= halfSize;
@@ -125,6 +131,9 @@ public class Cube : MonoBehaviour {
                     ru = Quaternion.AngleAxis(-90, Vector3.up) * ru;
                     ld = Quaternion.AngleAxis(-90, Vector3.up) * ld;
                     rd = Quaternion.AngleAxis(-90, Vector3.up) * rd;
+
+                    n = Quaternion.AngleAxis(-90, Vector3.up) * n;
+
                     lu.x += halfSize;
                     ru.x += halfSize;
                     ld.x += halfSize;
@@ -135,6 +144,9 @@ public class Cube : MonoBehaviour {
                     ru = Quaternion.AngleAxis(-90, Vector3.right) * ru;
                     ld = Quaternion.AngleAxis(-90, Vector3.right) * ld;
                     rd = Quaternion.AngleAxis(-90, Vector3.right) * rd;
+
+                    n = Quaternion.AngleAxis(-90, Vector3.right) * n;
+
                     lu.y -= halfSize;
                     ru.y -= halfSize;
                     ld.y -= halfSize;
@@ -145,6 +157,9 @@ public class Cube : MonoBehaviour {
                     ru = Quaternion.AngleAxis(90, Vector3.right) * ru;
                     ld = Quaternion.AngleAxis(90, Vector3.right) * ld;
                     rd = Quaternion.AngleAxis(90, Vector3.right) * rd;
+
+                    n = Quaternion.AngleAxis(90, Vector3.right) * n;
+
                     lu.y += halfSize;
                     ru.y += halfSize;
                     ld.y += halfSize;
@@ -161,6 +176,9 @@ public class Cube : MonoBehaviour {
                     ru = Quaternion.AngleAxis(180, Vector3.up) * ru;
                     ld = Quaternion.AngleAxis(180, Vector3.up) * ld;
                     rd = Quaternion.AngleAxis(180, Vector3.up) * rd;
+
+                    n = Quaternion.AngleAxis(180, Vector3.up) * n;
+
                     lu.z += halfSize;
                     ru.z += halfSize;
                     ld.z += halfSize;
@@ -168,16 +186,31 @@ public class Cube : MonoBehaviour {
                     break;
                 }
 
-                vertices.Add(lu);
-                vertices.Add(ru);
-                vertices.Add(ld);
-                vertices.Add(rd);
+                int vertexOffset   = j * verticesPerSideCount + i * 4;
+                int triangleOffset = j * quadLOD * 6 + i * 6;
+
+                vertices[vertexOffset]     = lu;
+                vertices[vertexOffset + 1] = ru;
+                vertices[vertexOffset + 2] = ld;
+                vertices[vertexOffset + 3] = rd;
+
+                normals[vertexOffset]     = n;
+                normals[vertexOffset + 1] = n;
+                normals[vertexOffset + 2] = n;
+                normals[vertexOffset + 3] = n;
+
+                triangles[triangleOffset]     = vertexOffset;     // left-up quad
+                triangles[triangleOffset + 1] = vertexOffset + 1; // left-up quad
+                triangles[triangleOffset + 2] = vertexOffset + 2; // left-up quad
+                triangles[triangleOffset + 3] = vertexOffset + 1; // right-down quad
+                triangles[triangleOffset + 4] = vertexOffset + 3; // right-down quad
+                triangles[triangleOffset + 5] = vertexOffset + 2; // right-down quad
             }
         }
 
-        mesh.SetVertices(vertices);
+        mesh.vertices  = vertices;
+        mesh.normals   = normals;
         mesh.triangles = triangles;
-        mesh.RecalculateNormals();
 
         GetComponent<MeshFilter>().sharedMesh = mesh;
     }
