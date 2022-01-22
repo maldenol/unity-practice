@@ -2,26 +2,26 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Sphere : MonoBehaviour {
+public class QuadSphere : MonoBehaviour {
     public uint RADIUS = 1;
     public uint LOD    = 2;
 
     void Awake() {
         Mesh mesh = new Mesh();
-        mesh.name = "Procedural Sphere";
+        mesh.name = "Procedural Quad Sphere";
 
         // Level-Of-Details (count of quads along one side)
-        float xyQuadSize = 1f / LOD;          // discrete quad's side xy size (optimization)
-        float uQuadSize  = 1f / 4f / LOD;     // discrete quad's side u size (optimization)
-        float vQuadSize  = 1f / 3f / LOD;     // discrete quad's side v size (optimization)
-        float halfSize   = 1f / 2f;           // hald of the SIZE (optimization)
-        int quadLOD      = (int)(LOD * LOD);  // LOD^2 (optimization)
+        float xyQuadSize = 1f / (int)LOD;      // discrete quad's side xy size
+        float uQuadSize  = 1f / 4f / (int)LOD; // discrete quad's side u size
+        float vQuadSize  = 1f / 3f / (int)LOD; // discrete quad's side v size
+        float halfSize   = 1f / 2f;            // half of the SIZE
+        int quadLOD      = (int)(LOD * LOD);   // LOD^2
 
         int quadsPerSideCount     = quadLOD;
-        int verticesPerSideCount  = 4 * quadLOD;
+        int verticesPerSideCount  = 4 * quadsPerSideCount;
         int verticesCount         = 6 * verticesPerSideCount;
-        int trianglesPerSideCount = 2 * quadLOD * 3; // indexes actually, 3 indexes for each triangle
-        int trianglesCount        = 6 * trianglesPerSideCount;
+        int trianglesPerSideCount = 2 * quadsPerSideCount * 3; // indexes actually, 3 indexes for each triangle
+        int trianglesCount        = 6 * trianglesPerSideCount; // indexes actually, 3 indexes for each triangle
 
         Vector3[] vertices = new Vector3[verticesCount];
         Vector3[] normals  = new Vector3[verticesCount];
@@ -31,16 +31,17 @@ public class Sphere : MonoBehaviour {
         // making cube for further transformation
         for (int j = 0; j < 6; ++j) { // the whole cube
             for (int i = 0; i < quadsPerSideCount; ++i) { // single side
-                int row        = i / (int)LOD;
-                int column     = i % (int)LOD;
-                float leftX    = column * xyQuadSize - halfSize;
-                float rightX   = (column + 1) * xyQuadSize - halfSize;
-                float upY      = (row + 1) * xyQuadSize - halfSize;
-                float downY    = row * xyQuadSize - halfSize;
-                float leftU    = column * uQuadSize;
-                float rightU   = (column + 1) * uQuadSize;
-                float upV      = (row + 1) * vQuadSize;
-                float downV    = row * vQuadSize;
+                int row      = i / (int)LOD;
+                int column   = i % (int)LOD;
+                float leftX  = column * xyQuadSize - halfSize;
+                float rightX = (column + 1) * xyQuadSize - halfSize;
+                float downY  = row * xyQuadSize - halfSize;
+                float upY    = (row + 1) * xyQuadSize - halfSize;
+
+                float leftU  = column * uQuadSize;
+                float rightU = (column + 1) * uQuadSize;
+                float downV  = row * vQuadSize;
+                float upV    = (row + 1) * vQuadSize;
 
                 Vector3 lu = new Vector3(leftX, upY, 0);
                 Vector3 ru = new Vector3(rightX, upY, 0);
@@ -184,12 +185,12 @@ public class Sphere : MonoBehaviour {
                 uvs[vertexOffset + 2] = ldUV;
                 uvs[vertexOffset + 3] = rdUV;
 
-                triangles[triangleOffset]     = vertexOffset;     // left-up quad
-                triangles[triangleOffset + 1] = vertexOffset + 1; // left-up quad
-                triangles[triangleOffset + 2] = vertexOffset + 2; // left-up quad
-                triangles[triangleOffset + 3] = vertexOffset + 1; // right-down quad
-                triangles[triangleOffset + 4] = vertexOffset + 3; // right-down quad
-                triangles[triangleOffset + 5] = vertexOffset + 2; // right-down quad
+                triangles[triangleOffset]     = vertexOffset;     // left-up triangle
+                triangles[triangleOffset + 1] = vertexOffset + 1; // left-up triangle
+                triangles[triangleOffset + 2] = vertexOffset + 2; // left-up triangle
+                triangles[triangleOffset + 3] = vertexOffset + 1; // right-down triangle
+                triangles[triangleOffset + 4] = vertexOffset + 3; // right-down triangle
+                triangles[triangleOffset + 5] = vertexOffset + 2; // right-down triangle
             }
         }
 
