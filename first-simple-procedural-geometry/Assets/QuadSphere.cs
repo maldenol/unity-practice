@@ -17,9 +17,9 @@ public class QuadSphere : MonoBehaviour {
         float halfSize   = 1f / 2f;            // half of the SIZE
         int quadLOD      = (int)(LOD * LOD);   // LOD^2
 
-        int quadsPerSideCount     = quadLOD;
-        int verticesPerSideCount  = 4 * quadsPerSideCount;
-        int verticesCount         = 6 * verticesPerSideCount;
+        int quadsPerSideCount     = quadLOD;                   // discrete quads per side count
+        int verticesPerSideCount  = 4 * quadsPerSideCount;     // vertices per side count
+        int verticesCount         = 6 * verticesPerSideCount;  // vertices count
         int trianglesPerSideCount = 2 * quadsPerSideCount * 3; // indexes actually, 3 indexes for each triangle
         int trianglesCount        = 6 * trianglesPerSideCount; // indexes actually, 3 indexes for each triangle
 
@@ -29,10 +29,10 @@ public class QuadSphere : MonoBehaviour {
         int[] triangles    = new int[trianglesCount];
 
         // making cube for further transformation
-        for (int j = 0; j < 6; ++j) { // the whole cube
-            for (int i = 0; i < quadsPerSideCount; ++i) { // single side
-                int row      = i / (int)LOD;
-                int column   = i % (int)LOD;
+        for (int s = 0; s < 6; ++s) { // the whole cube
+            for (int v = 0; v < quadsPerSideCount; ++v) { // single side
+                int row      = v / (int)LOD;
+                int column   = v % (int)LOD;
                 float leftX  = column * xyQuadSize - halfSize;
                 float rightX = (column + 1) * xyQuadSize - halfSize;
                 float downY  = row * xyQuadSize - halfSize;
@@ -54,7 +54,7 @@ public class QuadSphere : MonoBehaviour {
                 Vector2 rdUV = new Vector2(rightU, downV);
 
                 // placing the side on its place
-                switch (j) {
+                switch (s) {
                 case 0: // x-
                     lu = Quaternion.AngleAxis(90, Vector3.up) * lu;
                     ru = Quaternion.AngleAxis(90, Vector3.up) * ru;
@@ -172,8 +172,8 @@ public class QuadSphere : MonoBehaviour {
                     break;
                 }
 
-                int vertexOffset   = j * verticesPerSideCount + i * 4;
-                int triangleOffset = j * quadLOD * 6 + i * 6;
+                int vertexOffset   = s * verticesPerSideCount + v * 4;
+                int triangleOffset = s * quadLOD * 6 + v * 6;
 
                 vertices[vertexOffset]     = lu;
                 vertices[vertexOffset + 1] = ru;
@@ -195,9 +195,9 @@ public class QuadSphere : MonoBehaviour {
         }
 
         // projecting cube on sphere
-        for (int i = 0; i < verticesCount; ++i) {
-            vertices[i] = vertices[i].normalized * RADIUS;
-            normals[i]  = vertices[i].normalized;
+        for (int v = 0; v < verticesCount; ++v) {
+            vertices[v] = vertices[v].normalized * RADIUS;
+            normals[v]  = vertices[v].normalized;
         }
 
         mesh.vertices  = vertices;

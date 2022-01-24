@@ -14,6 +14,7 @@ public class UVSphere : MonoBehaviour {
         int columns        = 2 * (int)LOD;            // longitude
         int rows           = (int)LOD;                // latitude
         float halfRows     = rows / 2f;               // half of the rows count
+
         int trapezesCount  = columns * rows;          // count of discrete trapezes
         int verticesCount  = 4 * trapezesCount;       // count of vertices
         int trianglesCount = 2 * trapezesCount * 3;   // indexes actually, 3 indexes for each triangle

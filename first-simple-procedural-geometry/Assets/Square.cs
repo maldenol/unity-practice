@@ -29,14 +29,18 @@ public class Square : MonoBehaviour {
         float halfSize   = SIZE / 2f;              // half of the SIZE
         int quadLOD      = (int)(LOD * LOD);       // LOD^2
 
-        Vector3[] vertices = new Vector3[4 * quadLOD]; // 4*LOD^2 vertices
-        Vector3[] normals  = new Vector3[4 * quadLOD]; // 4*LOD^2 normals
-        Vector2[] uvs      = new Vector2[4 * quadLOD]; // UV coordinates for each vertex
-        int[] triangles    = new int[2 * quadLOD * 3]; // 2*LOD^2 triangles (3 indexes each) each
+        int quadsCount     = quadLOD;            // count of discrete quads
+        int verticesCount  = 4 * quadsCount;     // count of vertices
+        int trianglesCount = 2 * quadsCount * 3; // indexes actually, 3 indexes for each triangle
 
-        for (int i = 0; i < quadLOD; ++i) {
-            int row    = i / (int)LOD;
-            int column = i % (int)LOD;
+        Vector3[] vertices = new Vector3[verticesCount]; // 4*LOD^2 vertices
+        Vector3[] normals  = new Vector3[verticesCount]; // 4*LOD^2 normals
+        Vector2[] uvs      = new Vector2[verticesCount]; // UV coordinates for each vertex
+        int[] triangles    = new int[trianglesCount];    // 2*LOD^2 triangles (3 indexes each) each
+
+        for (int v = 0; v < quadsCount; ++v) {
+            int row    = v / (int)LOD;
+            int column = v % (int)LOD;
             float lux = column * xyQuadSize - halfSize;
             float rux = (column + 1) * xyQuadSize - halfSize;
             float ldx = lux;
@@ -54,27 +58,27 @@ public class Square : MonoBehaviour {
             float ldv = row * uvQuadSize;
             float rdv = ldv;
 
-            vertices[i * 4]     = new Vector3(lux, luy, 0); // left-up
-            vertices[i * 4 + 1] = new Vector3(rux, ruy, 0); // right-up
-            vertices[i * 4 + 2] = new Vector3(ldx, ldy, 0); // left-down
-            vertices[i * 4 + 3] = new Vector3(rdx, rdy, 0); // right-down
+            vertices[v * 4]     = new Vector3(lux, luy, 0); // left-up
+            vertices[v * 4 + 1] = new Vector3(rux, ruy, 0); // right-up
+            vertices[v * 4 + 2] = new Vector3(ldx, ldy, 0); // left-down
+            vertices[v * 4 + 3] = new Vector3(rdx, rdy, 0); // right-down
 
-            normals[i * 4]     = Vector3.back; // left-up
-            normals[i * 4 + 1] = Vector3.back; // right-up
-            normals[i * 4 + 2] = Vector3.back; // left-down
-            normals[i * 4 + 3] = Vector3.back; // right-down
+            normals[v * 4]     = Vector3.back; // left-up
+            normals[v * 4 + 1] = Vector3.back; // right-up
+            normals[v * 4 + 2] = Vector3.back; // left-down
+            normals[v * 4 + 3] = Vector3.back; // right-down
 
-            uvs[i * 4]     = new Vector2(luu, luv); // left-up
-            uvs[i * 4 + 1] = new Vector2(ruu, ruv); // right-up
-            uvs[i * 4 + 2] = new Vector2(ldu, ldv); // left-down
-            uvs[i * 4 + 3] = new Vector2(rdu, rdv); // right-down
+            uvs[v * 4]     = new Vector2(luu, luv); // left-up
+            uvs[v * 4 + 1] = new Vector2(ruu, ruv); // right-up
+            uvs[v * 4 + 2] = new Vector2(ldu, ldv); // left-down
+            uvs[v * 4 + 3] = new Vector2(rdu, rdv); // right-down
 
-            triangles[i * 6]     = i * 4;     // left-up triangle
-            triangles[i * 6 + 1] = i * 4 + 1; // left-up triangle
-            triangles[i * 6 + 2] = i * 4 + 2; // left-up triangle
-            triangles[i * 6 + 3] = i * 4 + 1; // right-down triangle
-            triangles[i * 6 + 4] = i * 4 + 3; // right-down triangle
-            triangles[i * 6 + 5] = i * 4 + 2; // right-down triangle
+            triangles[v * 6]     = v * 4;     // left-up triangle
+            triangles[v * 6 + 1] = v * 4 + 1; // left-up triangle
+            triangles[v * 6 + 2] = v * 4 + 2; // left-up triangle
+            triangles[v * 6 + 3] = v * 4 + 1; // right-down triangle
+            triangles[v * 6 + 4] = v * 4 + 3; // right-down triangle
+            triangles[v * 6 + 5] = v * 4 + 2; // right-down triangle
         }
 
         mesh.vertices  = vertices;
