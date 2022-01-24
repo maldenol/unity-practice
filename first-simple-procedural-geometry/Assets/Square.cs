@@ -33,6 +33,8 @@ public class Square : MonoBehaviour {
         int verticesCount  = 4 * quadsCount;     // count of vertices
         int trianglesCount = 2 * quadsCount * 3; // indexes actually, 3 indexes for each triangle
 
+        if (verticesCount > 65535) mesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
+
         Vector3[] vertices = new Vector3[verticesCount]; // 4*LOD^2 vertices
         Vector3[] normals  = new Vector3[verticesCount]; // 4*LOD^2 normals
         Vector2[] uvs      = new Vector2[verticesCount]; // UV coordinates for each vertex
@@ -80,6 +82,18 @@ public class Square : MonoBehaviour {
             triangles[v * 6 + 4] = v * 4 + 3; // right-down triangle
             triangles[v * 6 + 5] = v * 4 + 2; // right-down triangle
         }
+
+        // for (int v = 0; v < verticesCount; ++v) { // Perlin noise
+        //     float amplitude = 0.05f;
+        //     float frequency = 10f;
+
+        //     for (int l = 0; l < 5; ++l) { // single noise layer (pass)
+        //         float noiseValue = Mathf.PerlinNoise(frequency * uvs[v].x, frequency * uvs[v].y) * 2f - 1f;
+        //         vertices[v]     += amplitude * normals[v] * noiseValue;
+        //         amplitude       /= 2f;
+        //         frequency       *= 2f;
+        //     }
+        // }
 
         mesh.vertices  = vertices;
         mesh.normals   = normals;

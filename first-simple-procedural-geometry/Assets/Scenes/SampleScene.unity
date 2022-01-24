@@ -277,7 +277,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   RADIUS: 1
-  LOD: 50
+  LOD: 100
 --- !u!23 &630667044
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -562,7 +562,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   RADIUS: 1
-  LOD: 50
+  LOD: 100
 --- !u!23 &1134820901
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -671,7 +671,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   SIZE: 2
-  LOD: 50
+  LOD: 100
 --- !u!23 &1964355638
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -780,7 +780,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   RADIUS: 1
-  LOD: 1
 --- !u!23 &2028741030
 MeshRenderer:
   m_ObjectHideFlags: 0

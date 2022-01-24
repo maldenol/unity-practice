@@ -93,6 +93,8 @@ public class Cube : MonoBehaviour {
         int trianglesPerSideCount = 2 * quadsPerSideCount * 3; // indexes actually, 3 indexes for each triangle
         int trianglesCount        = 6 * trianglesPerSideCount; // indexes actually, 3 indexes for each triangle
 
+        if (verticesCount > 65535) mesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
+
         Vector3[] vertices = new Vector3[verticesCount];
         Vector3[] normals  = new Vector3[verticesCount];
         Vector2[] uvs      = new Vector2[verticesCount];
@@ -278,6 +280,18 @@ public class Cube : MonoBehaviour {
                 triangles[triangleOffset + 5] = vertexOffset + 2; // right-down triangle
             }
         }
+
+        // for (int v = 0; v < verticesCount; ++v) { // Perlin noise
+        //     float amplitude = 0.05f;
+        //     float frequency = 10f;
+
+        //     for (int l = 0; l < 5; ++l) { // single noise layer (pass)
+        //         float noiseValue = Mathf.PerlinNoise(frequency * uvs[v].x, frequency * uvs[v].y) * 2f - 1f;
+        //         vertices[v]     += amplitude * normals[v] * noiseValue;
+        //         amplitude       /= 2f;
+        //         frequency       *= 2f;
+        //     }
+        // }
 
         mesh.vertices  = vertices;
         mesh.normals   = normals;

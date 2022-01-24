@@ -23,6 +23,8 @@ public class UVSphere : MonoBehaviour {
         float trapezeUDim  = 1f / columns;            // discrete trapeze's side u dimension
         float trapezeVDim  = 1f / rows;               // discrete trapeze's side v dimension
 
+        if (verticesCount > 65535) mesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
+
         Vector3[] vertices = new Vector3[verticesCount];
         Vector3[] normals  = new Vector3[verticesCount];
         Vector2[] uvs      = new Vector2[verticesCount];
@@ -102,6 +104,18 @@ public class UVSphere : MonoBehaviour {
                 triangles[triangleOffset + 5] = vertexOffset + 2; // right-down triangle
             }
         }
+
+        // for (int v = 0; v < verticesCount; ++v) { // Perlin noise
+        //     float amplitude = 0.05f;
+        //     float frequency = 10f;
+
+        //     for (int l = 0; l < 5; ++l) { // single noise layer (pass)
+        //         float noiseValue = Mathf.PerlinNoise(frequency * uvs[v].x, frequency * uvs[v].y) * 2f - 1f;
+        //         vertices[v]     += amplitude * normals[v] * noiseValue;
+        //         amplitude       /= 2f;
+        //         frequency       *= 2f;
+        //     }
+        // }
 
         mesh.vertices  = vertices;
         mesh.normals   = normals;

@@ -17,6 +17,8 @@ public class IcoSphere : MonoBehaviour {
         Vector2[] uvs      = new Vector2[verticesCount];
         int[] triangles    = new int[trianglesCount];
 
+        if (verticesCount > 65535) mesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
+
         // generating an icosahedron
         float circumferenceRadius = 1f / Mathf.Sqrt(5f);
         for (int p = 0; p < 2; ++p) { // 2 poles
@@ -101,6 +103,18 @@ public class IcoSphere : MonoBehaviour {
             vertices[v] = vertices[v].normalized * RADIUS;
             normals[v]  = vertices[v].normalized;
         }
+
+        // for (int v = 0; v < verticesCount; ++v) { // Perlin noise
+        //     float amplitude = 0.05f;
+        //     float frequency = 10f;
+
+        //     for (int l = 0; l < 5; ++l) { // single noise layer (pass)
+        //         float noiseValue = Mathf.PerlinNoise(frequency * uvs[v].x, frequency * uvs[v].y) * 2f - 1f;
+        //         vertices[v]     += amplitude * normals[v] * noiseValue;
+        //         amplitude       /= 2f;
+        //         frequency       *= 2f;
+        //     }
+        // }
 
         mesh.vertices  = vertices;
         mesh.normals   = normals;
