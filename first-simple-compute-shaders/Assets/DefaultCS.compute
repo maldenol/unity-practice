@@ -1,0 +1,18 @@
+#pragma kernel csMain
+
+RWTexture2D<float4> renderTexture;
+
+int resolutionX;
+int resolutionY;
+
+[numthreads(8, 8, 1)]
+void csMain(uint3 id : SV_DispatchThreadID) {
+    //renderTexture[id.xy] = float4(id.x & id.y, (id.x & 15) / 15.0, (id.y & 15) / 15.0, 0.0);
+
+    float r = (float)id.x / resolutionX;
+    float g = (float)id.y / resolutionY;
+    float b = 0.5;
+    float a = 0.0;
+
+    renderTexture[id.xy] = float4(r, g, b, a);
+}
