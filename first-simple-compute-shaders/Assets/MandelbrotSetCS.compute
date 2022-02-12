@@ -1,0 +1,41 @@
+#pragma kernel csMain
+
+RWTexture2D<float4>        textureOut;
+RWStructuredBuffer<float>  borders;
+RWStructuredBuffer<float4> colors;
+
+int iterCount;
+
+[numthreads(32, 32, 1)]
+void csMain(uint3 id : SV_DispatchThreadID) {
+    float k = 0.0009765625;
+
+    float dx = borders[2] - borders[0];
+    float dy = borders[3] - borders[1];
+
+    float x0 = borders[0] + (int)id.x * dx * k;
+    float y0 = borders[1] + (int)id.y * dy * k;
+
+    float x = x0;
+    float y = y0;
+
+    float newX, newY;
+
+    float d = 0.0;
+
+    int it = 0;
+
+    while (it < iterCount && d < 4.0) {
+        newX = x * x - y * y + x0;
+        newY = 2.0 * x * y + y0;
+
+        x = newX;
+        y = newY;
+
+        d = x * x + y * y;
+
+        ++it;
+    }
+
+    textureOut[id.xy] = colors[it];
+}
