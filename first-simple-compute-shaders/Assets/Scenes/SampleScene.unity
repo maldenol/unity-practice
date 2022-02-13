@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.44658828, g: 0.49642307, b: 0.57482517, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657862, g: 0.4964124, b: 0.5748172, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -552,10 +552,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   particlesCount: 1000
-  particleRadius: 0.1
+  particleSize: 0.01
+  minimalDistance: 2
   maximalDistance: 5
-  gravitationalConstant: 0.1
-  iterationsPerTick: 40
 --- !u!4 &1698734659
 Transform:
   m_ObjectHideFlags: 0
