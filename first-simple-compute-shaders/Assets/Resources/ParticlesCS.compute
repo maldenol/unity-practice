@@ -1,0 +1,23 @@
+#pragma kernel calcParticle
+
+RWStructuredBuffer<float3> particlesPositions;
+StructuredBuffer<float>    particlesOffsets;
+
+float minDistance, maxDistance;
+
+float currTime;
+
+[numthreads(64, 1, 1)]
+void calcParticle(uint3 id : SV_DispatchThreadID) {
+    // Getting position and offset
+    float3 pos   = particlesPositions[id.x];
+    float offset = particlesOffsets[id.x];
+
+    // Updating position
+    float posScalar = minDistance +
+        (sin(currTime + offset) / 2.0 + 0.5) * (maxDistance - minDistance);
+    pos = normalize(pos) * posScalar;
+
+    // Setting new position
+    particlesPositions[id.x] = pos;
+}
