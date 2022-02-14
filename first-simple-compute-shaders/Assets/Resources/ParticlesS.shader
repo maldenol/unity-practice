@@ -1,4 +1,4 @@
-Shader "Unlit/ParticlesS" {
+Shader "Custom/ParticlesS" {
     Properties {
         _MainTex ("Texture", 2D) = "white" {}
     }

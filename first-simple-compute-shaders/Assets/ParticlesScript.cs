@@ -65,9 +65,9 @@ public class ParticlesScript : MonoBehaviour {
         Transform thisTransform = GetComponent<Transform>();
         Mesh pointMesh = new Mesh();
         pointMesh.vertices = new Vector3[]{Vector3.zero};
-        pointMesh.triangles = new int[]{0, 0, 0};
-        Material material = Resources.Load<Material>("ParticlesM");
-        material.SetFloat("_Size", particleSize);
+        pointMesh.SetIndices(new int[]{0}, MeshTopology.Points, 0);
+        Material quadBillboardMaterial = Resources.Load<Material>("ParticlesM");
+        quadBillboardMaterial.SetFloat("_Size", particleSize);
         // Filling array with particles
         for (uint i = 0; i < particlesCount; ++i) {
             // Initializing new particle
@@ -77,7 +77,7 @@ public class ParticlesScript : MonoBehaviour {
                 typeof(MeshRenderer)
             );
             newParticle.GetComponent<MeshFilter>().sharedMesh = pointMesh;
-            newParticle.GetComponent<MeshRenderer>().material = material;
+            newParticle.GetComponent<MeshRenderer>().material = quadBillboardMaterial;
             // Making blank object a child of this object
             newParticle.transform.parent = thisTransform;
             // Adding particle to array
