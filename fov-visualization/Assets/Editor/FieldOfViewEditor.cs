@@ -36,8 +36,5 @@ public class FieldOfViewEditor : Editor {
         foreach (Transform visibleTarget in fov.visibleTargets) {
             Handles.DrawLine(fov.transform.position, visibleTarget.position);
         }
-
-        // Updating FOV visualization mesh
-        fov.DrawFieldOfView();
     }
 }

@@ -13,6 +13,8 @@ public class FieldOfView : MonoBehaviour {
     public int edgeResolveIterations = 1;
     [Range(0f, 10f)]
     public float edgeDistanceThreshhold = 1f;
+    [Range(0f, 1f)]
+    public float stencilMaskCutawayDistance = 1f;
 
     public LayerMask targetMask;
     public LayerMask obstacleMask;
@@ -30,8 +32,13 @@ public class FieldOfView : MonoBehaviour {
         viewMesh.name       = "View Mesh";
         viewMeshFilter.mesh = viewMesh;
 
-        // Starting FindTargetsWithDelay coroutine each 0.1 seconds
+        // Starting FindTargetsWithDelay coroutine with specific period
         StartCoroutine("FindTargetsWithDelay", 0.1f);
+    }
+
+    void LateUpdate() {
+        // Updating FOV visualization mesh
+        UpdateFieldOfViewMesh();
     }
 
     // Coroutine function for running FindVisibleTargets each <delay> seconds
@@ -74,7 +81,7 @@ public class FieldOfView : MonoBehaviour {
     }
 
     // Function for updating FOV visualization mesh
-    public void DrawFieldOfView() {
+    public void UpdateFieldOfViewMesh() {
         int stepCount   = Mathf.RoundToInt(viewAngle * meshResolution);
         float stepAngle = viewAngle / stepCount;
 
@@ -121,7 +128,7 @@ public class FieldOfView : MonoBehaviour {
 
         vertices[0] = Vector3.zero;
         for (int i = 0; i < vertexCount - 1; ++i) {
-            vertices[i + 1] = transform.InverseTransformPoint(viewPoints[i]);
+            vertices[i + 1] = transform.InverseTransformPoint(viewPoints[i]) + Vector3.forward * stencilMaskCutawayDistance;
 
             if (i < vertexCount - 2) {
                 triangles[i * 3]     = 0;
